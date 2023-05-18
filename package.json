@@ -1,0 +1,54 @@
+{
+  "name": "shgpu-table-v2",
+  "version": "1.0.0",
+  "description": "Improving students experience with the table.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "pnpm run migration:up",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "eslint": "npx eslint --ext .ts src",
+    "eslint:fix": "npx eslint --ext .ts --fix src",
+    "migration:create": "npx typeorm migration:create -p -n",
+    "migration:up": "typeorm migration:run",
+    "dev": "nodemon",
+    "debug": "node --inspect=0.0.0.0:9229 --nolazy ./dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danilluk1/shgpu-table-v2.git"
+  },
+  "keywords": [
+    "telegram",
+    "shgpu",
+    "shgpi",
+    "table"
+  ],
+  "author": "Danluki <danluki02@yandex.ru>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danilluk1/shgpu-table-v2/issues"
+  },
+  "homepage": "https://github.com/danilluk1/shgpu-table-v2#readme",
+  "devDependencies": {
+    "@types/node": "^20.2.0",
+    "@types/source-map-support": "^0.5.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "eslint": "^8.40.0",
+    "nodemon": "^2.0.22",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.7",
+    "grammy": "^1.16.0",
+    "pg": "^8.11.0",
+    "reflect-metadata": "^0.1.13",
+    "source-map-support": "^0.5.21",
+    "typeorm": "^0.3.16"
+  }
+}

@@ -51,8 +51,10 @@ class TelegramService extends ServiceInterface {
   }
 
   async init() {
+    console.log("123");
     await this.bot.init();
-    // await this.bot.api.setM;
+    console.log("123");
+    this.bot.start();
   }
 }
 

@@ -1,8 +1,10 @@
 import "dotenv/config";
 import "reflect-metadata";
-import "source-map-support/register";
+// import "source-map-support/register";
 import cron from "node-cron";
 import repository from "./db/repository";
+import telegramService from "./services/telegram";
+import { error } from "./libs/logger";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -55,8 +57,30 @@ cron.schedule("0 7 * * *", async () => {});
 cron.schedule("0 19 * * *", async () => {});
 
 const start = async () => {
-  await repository.connect();
+  try {
+    await repository.connect();
+    await telegramService.init();
+  } catch (e) {
+    error(e);
+  }
   console.log("Bot has been started.");
 };
 
-start();
+start().catch(console.error);
+
+process
+  .on("SIGINT", () => {})
+  .on("SIGTERM", () => {})
+  .on("unhandledRejection", (reason) => {
+    error(reason);
+  })
+  .on("uncaughtException", (err: Error) => {
+    const date = new Date().toISOString();
+
+    process.report?.writeReport(`uncaughtException-${date}`, err);
+    error(err);
+
+    process.exit(1);
+  });
+
+//npx typeorm-ts-node-esm migration:generate ./src/db/migrations/Initial -d ./src/db/index.ts

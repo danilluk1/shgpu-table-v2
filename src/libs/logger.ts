@@ -4,7 +4,7 @@ import { createStream } from "rotating-file-stream";
 import { inspect } from "util";
 import os from "os";
 import { getFuncNameFromStackTrace } from "../commons/stacktrace";
-import stripAnsi from "strip-ansi";
+import stripAnsi = require("strip-ansi");
 
 const levelFormat = {
   error: "!!! ERROR !!!",

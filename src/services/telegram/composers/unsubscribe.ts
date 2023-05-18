@@ -5,7 +5,7 @@ import { TelegramMessageSender } from "../message-sender";
 
 export const unsubscribeComposer = new Composer<Context>();
 
-unsubscribeComposer.hears(/(?i)Забудь меня/, async (ctx) => {
+unsubscribeComposer.hears(/Забудь меня/i, async (ctx) => {
   const { message } = await unsubscribeCommand({
     sub: ctx.session.sub
   });

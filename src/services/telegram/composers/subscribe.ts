@@ -5,7 +5,7 @@ import { TelegramMessageSender } from "../message-sender";
 
 export const subscribeComposer = new Composer<Context>();
 
-subscribeComposer.hears(/(?i)Подпиши на \S+/, async (ctx) => {
+subscribeComposer.hears(/Подпиши на \S+/i, async (ctx) => {
   const groupName = ctx.match[1];
 
   const { message } = await subscribeCommand({

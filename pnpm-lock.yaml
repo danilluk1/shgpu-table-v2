@@ -20,7 +20,7 @@ specifiers:
   rimraf: ^5.0.1
   rotating-file-stream: ^3.1.0
   source-map-support: ^0.5.21
-  strip-ansi: ^7.0.1
+  strip-ansi: ^6.0.1
   ts-node: ^10.9.1
   typeorm: ^0.3.16
   typescript: ^5.0.4
@@ -37,7 +37,7 @@ dependencies:
   reflect-metadata: 0.1.13
   rotating-file-stream: 3.1.0
   source-map-support: 0.5.21
-  strip-ansi: 7.0.1
+  strip-ansi: 6.0.1
   typeorm: 0.3.16_pg@8.11.0+ts-node@10.9.1
 
 devDependencies:
@@ -396,6 +396,7 @@ packages:
   /ansi-regex/6.0.1:
     resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
     engines: {node: '>=12'}
+    dev: true
 
   /ansi-styles/4.3.0:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
@@ -1711,6 +1712,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       ansi-regex: 6.0.1
+    dev: true
 
   /strip-json-comments/3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}

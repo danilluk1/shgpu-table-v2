@@ -2,8 +2,7 @@ import { GrammyError } from "grammy";
 import { chatOut, error } from "../../libs/logger";
 import { SendMessageOpts } from "../_interface";
 import TelegramService from "./index";
-import AppDataSource from "./../../db/index";
-import { Subscriber } from "../../entities/Subscriber";
+import { Subscriber } from "../../db/entities/Subscriber";
 
 export class TelegramMessageSender {
   static async sendMessage(opts: SendMessageOpts) {

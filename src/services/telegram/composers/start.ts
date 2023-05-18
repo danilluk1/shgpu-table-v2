@@ -9,7 +9,6 @@ startComposer.command("start", async (ctx) => {
   const { message } = startCommand();
   await TelegramMessageSender.sendMessage({
     target: ctx.chat.id,
-    message: message,
-    k
+    message: message
   });
 });

@@ -1,7 +1,7 @@
 import { Bot } from "grammy";
 import { Context } from "./types";
 import { ServiceInterface } from "../_interface";
-import { Services } from "../../entities/Subscriber";
+import { Services } from "../../db/entities/Subscriber";
 import { error, warning } from "../../libs/logger";
 import { limit } from "@grammyjs/ratelimiter";
 import { addSubscriberMiddleware } from "./middlewares/add-subscriber";
@@ -30,7 +30,7 @@ class TelegramService extends ServiceInterface {
         timeFrame: 2000,
         limit: 3,
         onLimitExceeded: (ctx) => {
-          ctx?.reply("Не так быстро, вы не одни.");
+          ctx?.reply("Не так быстро, вы не один.");
         },
         keyGenerator: (ctx) => {
           return ctx.from?.id.toString();
@@ -40,9 +40,9 @@ class TelegramService extends ServiceInterface {
     this.bot.use(addSubscriberMiddleware);
     this.bot.use(subscribeComposer);
     this.bot.use(unsubscribeComposer);
-    this.bot.use(getTimeTableComposer);
-    this.bot.use(getPairsComposer);
-    this.bot.use(getPairsByLectorComposer);
+    // this.bot.use(getTimeTableComposer);
+    // this.bot.use(getPairsComposer);
+    // this.bot.use(getPairsByLectorComposer);
 
     this.bot.catch((err) => {
       //TODO: Add check of error types
@@ -52,7 +52,7 @@ class TelegramService extends ServiceInterface {
 
   async init() {
     await this.bot.init();
-    await this.bot.api.setM;
+    // await this.bot.api.setM;
   }
 }
 

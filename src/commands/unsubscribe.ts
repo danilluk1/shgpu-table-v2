@@ -1,4 +1,4 @@
-import { Subscriber } from "../entities/Subscriber";
+import { Subscriber } from "../db/entities/Subscriber";
 import { AppDataSource } from "./../db/index";
 
 const subsRepository = AppDataSource.getRepository(Subscriber);

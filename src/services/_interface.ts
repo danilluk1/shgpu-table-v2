@@ -1,6 +1,6 @@
-import { Services, Subscriber } from "../entities/Subscriber";
+import { AppDataSource } from "../db";
+import { Services, Subscriber } from "../db/entities/Subscriber";
 import { In } from "typeorm";
-import AppDataSource from "./db/index";
 export interface SendMessageOpts {
   target: string | string[] | number | number[];
   image?: string;
@@ -31,7 +31,7 @@ export class ServiceInterface {
     const targets = Array.isArray(opts.target) ? opts.target : [opts.target];
     const repository = AppDataSource.getRepository(Subscriber);
     const chats = (
-      await repository.find({
+      await repository.findBy({
         id: In(targets.map((t) => t.toString()))
       })
     ).map((c) => c.id);

@@ -1,5 +1,5 @@
 import { faculties } from "../constants/faculties";
-import { Subscriber } from "../entities/Subscriber";
+import { Subscriber } from "../db/entities/Subscriber";
 
 export const getLinkCommand = (sub: Subscriber) => {
   if (!sub) {
@@ -9,5 +9,5 @@ export const getLinkCommand = (sub: Subscriber) => {
     };
   }
 
-  faculties.find(f => f.id = sub.)
+  // faculties.find(f => f.id = sub.)
 };

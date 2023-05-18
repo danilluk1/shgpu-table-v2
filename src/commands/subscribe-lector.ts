@@ -1,45 +1,45 @@
-import { Group } from "../db/entities/Group";
+import { Lector } from "../db/entities/Lector";
 import { Subscriber } from "../db/entities/Subscriber";
 import { AppDataSource } from "./../db/index";
 
 const subsRepository = AppDataSource.getRepository(Subscriber);
-const groupsRepository = AppDataSource.getRepository(Group);
+const lectorsRepository = AppDataSource.getRepository(Lector);
 
 export const subscribeCommand = async ({
   sub,
-  groupName
+  lectorName
 }: {
   sub?: Subscriber;
-  groupName: string;
+  lectorName: string;
 }) => {
   try {
     if (sub) {
       return {
         success: false,
-        message: "Вы уже подписаны на одну из групп, сначала отпишитесь."
+        message: "Вы уже подписаны, сначала отпишитесь."
       };
     }
 
-    groupName = groupName.replace(/\s/g, "").toLowerCase().trim();
-    const group = await groupsRepository.findOneBy({
-      name: groupName
+    lectorName = lectorName.replace(/\s/g, "").toLowerCase().trim();
+    const lector = await lectorsRepository.findOneBy({
+      name: lectorName
     });
-    if (!group) {
+    if (!lector) {
       return {
         success: false,
-        message: "Не удалось найти группу с таким названием!"
+        message: "Не удалось найти преподавателя!"
       };
     }
 
     const newSubscriber = new Subscriber();
     newSubscriber.chatId = sub.chatId;
-    newSubscriber.subscribedGroup = groupName;
+    newSubscriber.subscribedLector = lectorName;
 
     await subsRepository.save(newSubscriber);
 
     return {
       success: true,
-      message: `Теперь вы подписаны на группу ${groupName}`
+      message: `Теперь вы подписаны на преподавателя ${lectorName}`
     };
   } catch (e) {
     return {

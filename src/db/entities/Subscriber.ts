@@ -27,8 +27,11 @@ export class Subscriber extends BaseEntity {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
+  @Column({ nullable: true })
   subscribedGroup: string;
+
+  @Column({ nullable: true })
+  subscribedLector: string;
 
   @Column()
   facultyId: string;

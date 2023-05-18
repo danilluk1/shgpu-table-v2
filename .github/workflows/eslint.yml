@@ -1,0 +1,11 @@
+name: ESLINT
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ubuntu-latest
+    - name: Install modules
+      run pnpm install
+    - name: Run ESLint
+      run: eslint --ext .ts src

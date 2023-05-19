@@ -9,7 +9,7 @@ services:
       - ./.env.docker
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:14.1-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin

@@ -12,9 +12,9 @@ export const addSubscriberMiddleware = async (
 
   const sub = await repository.findOneBy({
     chatId: String(ctx.from?.id),
-    service: Services.TELEGRAM
+    service: Services.TELEGRAM,
   });
 
-  ctx.session.sub = sub;
+  ctx.session.sub = sub ?? null;
   return await next();
 };

@@ -2,7 +2,6 @@ import { GrammyError } from "grammy";
 import { chatOut, error } from "../../libs/logger";
 import { SendMessageOpts } from "../_interface";
 import TelegramService from "./index";
-import { Subscriber } from "../../db/entities/Subscriber";
 
 export class TelegramMessageSender {
   static async sendMessage(opts: SendMessageOpts) {
@@ -16,10 +15,21 @@ export class TelegramMessageSender {
         TelegramService.bot.api
           .sendPhoto(target, opts.image, {
             caption: opts.message,
-            parse_mode: "HTML"
+            parse_mode: "HTML",
           })
           .then(() => log())
           .catch((e) => this.catchError(e, target));
+      } else if (opts.kb) {
+        TelegramService.bot.api.sendMessage(target, opts.message, {
+          reply_markup: opts.kb,
+          disable_web_page_preview: true,
+          parse_mode: "HTML",
+        });
+      } else {
+        TelegramService.bot.api.sendMessage(target, opts.message, {
+          disable_web_page_preview: true,
+          parse_mode: "HTML",
+        });
       }
     }
   }

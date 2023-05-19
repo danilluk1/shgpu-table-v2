@@ -21,8 +21,8 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
     {
       id: 11,
       name: "Институт информационных технологий,точных и естественных наук",
-      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/"
-    }
+      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/",
+    },
     // {
     //   id: 3,
     //   name: "Факультет физической культуры",
@@ -69,8 +69,14 @@ const start = async () => {
 start().catch(console.error);
 
 process
-  .on("SIGINT", () => {})
-  .on("SIGTERM", () => {})
+  .on("SIGINT", async () => {
+    await telegramService.bot.stop();
+    process.exit(0);
+  })
+  .on("SIGTERM", async () => {
+    await telegramService.bot.stop();
+    process.exit(0);
+  })
   .on("unhandledRejection", (reason) => {
     error(reason);
   })

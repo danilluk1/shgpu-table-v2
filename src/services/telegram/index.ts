@@ -1,4 +1,4 @@
-import { Bot } from "grammy";
+import { Bot, session } from "grammy";
 import { Context } from "./types";
 import { ServiceInterface } from "../_interface";
 import { Services } from "../../db/entities/Subscriber";
@@ -7,13 +7,18 @@ import { limit } from "@grammyjs/ratelimiter";
 import { addSubscriberMiddleware } from "./middlewares/add-subscriber";
 import { subscribeComposer } from "./composers/subscribe";
 import { unsubscribeComposer } from "./composers/unsubscribe";
+import { sessionMiddleware } from "./middlewares/session";
+import { startComposer } from "./composers/start";
+import { helpComposer } from "./composers/help";
+import { timeTableComposer } from "./composers/timeTable-composer";
+import { downloadComposer } from "./composers/download";
 
 class TelegramService extends ServiceInterface {
   bot: Bot<Context>;
 
   constructor() {
     super({
-      service: Services.TELEGRAM
+      service: Services.TELEGRAM,
     });
 
     const accessToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -25,6 +30,7 @@ class TelegramService extends ServiceInterface {
     }
 
     this.bot = new Bot<Context>(accessToken);
+    this.bot.use(sessionMiddleware);
     this.bot.use(
       limit({
         timeFrame: 2000,
@@ -34,13 +40,16 @@ class TelegramService extends ServiceInterface {
         },
         keyGenerator: (ctx) => {
           return ctx.from?.id.toString();
-        }
+        },
       })
     );
     this.bot.use(addSubscriberMiddleware);
     this.bot.use(subscribeComposer);
     this.bot.use(unsubscribeComposer);
-    // this.bot.use(getTimeTableComposer);
+    this.bot.use(startComposer);
+    this.bot.use(helpComposer);
+    this.bot.use(timeTableComposer);
+    this.bot.use(downloadComposer);
     // this.bot.use(getPairsComposer);
     // this.bot.use(getPairsByLectorComposer);
 
@@ -51,9 +60,6 @@ class TelegramService extends ServiceInterface {
   }
 
   async init() {
-    console.log("123");
-    await this.bot.init();
-    console.log("123");
     this.bot.start();
   }
 }

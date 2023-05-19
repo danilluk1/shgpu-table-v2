@@ -11,7 +11,7 @@ const levelFormat = {
   chatIn: "<<<",
   chatOut: ">>>",
   info: "!!!",
-  warning: "WARNING"
+  warning: "WARNING",
 };
 
 const logDir = "./logs";
@@ -21,7 +21,7 @@ if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
 const file = createStream("./logs/bot.log", {
   maxFiles: 10,
   size: "512M",
-  compress: "gzip"
+  compress: "gzip",
 });
 
 const format = (level: string, message: any, category?: string) => {
@@ -40,7 +40,7 @@ const log = (message: any) => {
   const level = getFuncNameFromStackTrace();
 
   const formattedMessage = format(level, message);
-  process.stdout.write(formattedMessage + "\n");
+  console.log(formattedMessage + "\n");
   file.write(stripAnsi(formattedMessage) + os.EOL);
 };
 

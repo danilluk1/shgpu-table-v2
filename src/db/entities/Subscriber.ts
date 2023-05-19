@@ -4,7 +4,7 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Unique,
-  Entity
+  Entity,
 } from "typeorm";
 
 export enum Services {
@@ -16,26 +16,26 @@ export enum Services {
 @Unique(["chatId", "service"])
 export class Subscriber extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+    id: string;
 
   @Column()
-  chatId: string;
+    chatId: string;
 
   @Column({ enum: Services })
-  service: Services;
+    service: Services;
 
   @CreateDateColumn()
-  createdAt!: Date;
+    createdAt!: Date;
 
   @Column({ nullable: true })
-  subscribedGroup: string;
+    subscribedGroup: string;
 
   @Column({ nullable: true })
-  subscribedLector: string;
+    subscribedLector: string;
 
   @Column()
-  facultyId: string;
+    facultyId: number;
 
   @Column({ default: true })
-  subscribedToNotifications: boolean;
+    subscribedToNotifications: boolean;
 }

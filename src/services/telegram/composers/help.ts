@@ -12,3 +12,11 @@ helpComposer.command("help", async (ctx) => {
     message: message
   });
 });
+
+helpComposer.hears(/Помощь/i, async (ctx) => {
+  const { message } = helpCommand();
+  await TelegramMessageSender.sendMessage({
+    target: ctx.chat.id,
+    message: message
+  });
+});

@@ -3,8 +3,8 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("lectors")
 export class Lector extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+    id: string;
 
   @Column()
-  name: string;
+    name: string;
 }

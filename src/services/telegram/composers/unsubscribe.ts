@@ -7,11 +7,10 @@ export const unsubscribeComposer = new Composer<Context>();
 
 unsubscribeComposer.hears(/Забудь меня/i, async (ctx) => {
   const { message } = await unsubscribeCommand({
-    sub: ctx.session.sub
+    sub: ctx.session.sub,
   });
-
   await TelegramMessageSender.sendMessage({
-    target: ctx.session.sub.chatId,
-    message
+    target: ctx.chat.id,
+    message,
   });
 });

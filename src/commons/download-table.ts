@@ -11,7 +11,7 @@ export const downloadTable = async (link: string, faculty: any) => {
         recursive: true
       });
     }
-    fs.writeFileSync(facultyPath, data);
+    fs.writeFileSync(facultyPath + "/" + tableName, data);
 
     return facultyPath;
   });

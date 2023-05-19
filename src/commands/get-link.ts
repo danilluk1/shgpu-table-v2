@@ -9,5 +9,22 @@ export const getLinkCommand = (sub: Subscriber) => {
     };
   }
 
-  // faculties.find(f => f.id = sub.)
+  if (!sub.facultyId) {
+    return {
+      success: false,
+      message: "Не удалось найти информацию о вашем факультете!"
+    };
+  }
+
+  const faculty = faculties.find((f) => f.id == sub.facultyId);
+  if (!faculty) {
+    return {
+      success: false,
+      message: "Не удалось найти ваш факультет. Внутренняя ошибка."
+    };
+  }
+  return {
+    success: true,
+    message: faculty.link
+  };
 };

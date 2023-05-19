@@ -2,12 +2,12 @@ import { Entity, OneToMany, ManyToOne, PrimaryColumn } from "typeorm";
 import { Faculty } from "./Faculty";
 
 @Entity({
-  name: "groups"
+  name: "groups",
 })
 export class Group {
   @PrimaryColumn()
-  name: string;
+    name: string;
 
   @ManyToOne(() => Faculty, (faculty: Faculty) => faculty.id)
-  faculty: Faculty;
+    faculty: Faculty;
 }

@@ -1,15 +1,18 @@
+import { error } from "console";
 import { Group } from "../db/entities/Group";
-import { Subscriber } from "../db/entities/Subscriber";
+import { Services, Subscriber } from "../db/entities/Subscriber";
 import { AppDataSource } from "./../db/index";
+import repository from "../db/repository";
 
 const subsRepository = AppDataSource.getRepository(Subscriber);
-const groupsRepository = AppDataSource.getRepository(Group);
 
 export const subscribeCommand = async ({
   sub,
+  chatId,
   groupName
 }: {
   sub?: Subscriber;
+  chatId: number;
   groupName: string;
 }) => {
   try {
@@ -20,10 +23,7 @@ export const subscribeCommand = async ({
       };
     }
 
-    groupName = groupName.replace(/\s/g, "").toLowerCase().trim();
-    const group = await groupsRepository.findOneBy({
-      name: groupName
-    });
+    const group = await repository.getGroup(groupName);
     if (!group) {
       return {
         success: false,
@@ -32,8 +32,10 @@ export const subscribeCommand = async ({
     }
 
     const newSubscriber = new Subscriber();
-    newSubscriber.chatId = sub.chatId;
+    newSubscriber.chatId = chatId.toString();
+    newSubscriber.service = Services.TELEGRAM;
     newSubscriber.subscribedGroup = groupName;
+    newSubscriber.facultyId = group.faculty.id;
 
     await subsRepository.save(newSubscriber);
 
@@ -42,6 +44,7 @@ export const subscribeCommand = async ({
       message: `Теперь вы подписаны на группу ${groupName}`
     };
   } catch (e) {
+    error(e);
     return {
       success: false,
       message: "Внутренняя ошибка сервера. Повторите попытку позже."

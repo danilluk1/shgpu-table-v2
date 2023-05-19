@@ -6,9 +6,10 @@ import { TelegramMessageSender } from "../message-sender";
 export const startComposer = new Composer<Context>();
 
 startComposer.command("start", async (ctx) => {
-  const { message } = startCommand();
+  const { message, kb } = startCommand();
   await TelegramMessageSender.sendMessage({
     target: ctx.chat.id,
-    message: message
+    message: message,
+    kb,
   });
 });

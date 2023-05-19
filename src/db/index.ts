@@ -15,6 +15,7 @@ export const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DB_CONN,
   entities: [Group, Pair, Faculty, Lector, Subscriber],
-  migrations: ["src/db/migrations/*.ts"],
-  migrationsTableName: "typeorm_migrations"
+  migrations: [__dirname + "/migrations/**/*.ts"],
+  migrationsTableName: "typeorm_migrations",
+  logging: true,
 });

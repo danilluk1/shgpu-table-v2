@@ -16,7 +16,7 @@ class Repository {
 
   public async getFaculty(id: number): Promise<FacultyEntity | null> {
     const faculty = await this.typeorm.getRepository(FacultyEntity).findOneBy({
-      id: id
+      id: id,
     });
     return faculty;
   }
@@ -44,7 +44,7 @@ class Repository {
     pairs.forEach((pair: any) => {
       dtoPairs.push({
         ...pair,
-        date: new Date(pair.date).toISOString()
+        date: new Date(pair.date).toISOString(),
       });
     });
 
@@ -65,7 +65,7 @@ class Repository {
     pairs.forEach((pair: any) => {
       dtoPairs.push({
         ...pair,
-        date: new Date(pair.date).toISOString()
+        date: new Date(pair.date).toISOString(),
       });
     });
     return dtoPairs;
@@ -82,19 +82,19 @@ class Repository {
 
     const pairs = await this.typeorm.getRepository(PairEntity).find({
       order: {
-        date: "ASC"
+        date: "ASC",
       },
       select: {
         name: true,
         number: true,
         day: true,
         groupName: true,
-        date: true
+        date: true,
       },
       where: {
         groupName: groupName,
-        date: Between(startDate.toDate(), endDate.toDate())
-      }
+        date: Between(startDate.toDate(), endDate.toDate()),
+      },
     });
 
     const dtoPairs: Pair[] = [];
@@ -102,7 +102,7 @@ class Repository {
       // @ts-ignore
       dtoPairs.push({
         ...pair,
-        date: new Date(pair.date).toISOString()
+        date: new Date(pair.date).toISOString(),
       });
     });
     return dtoPairs;
@@ -112,8 +112,8 @@ class Repository {
     const group = await this.typeorm.getRepository(Group).findOne({
       where: { name: groupName },
       relations: {
-        faculty: true
-      }
+        faculty: true,
+      },
     });
 
     return group;
@@ -127,19 +127,19 @@ class Repository {
     const pairs = await this.typeorm.getRepository(PairEntity).find({
       order: {
         date: "ASC",
-        number: "ASC"
+        number: "ASC",
       },
       select: {
         name: true,
         number: true,
         day: true,
         groupName: true,
-        date: true
+        date: true,
       },
       where: {
         groupName: groupName,
-        date: Between(begin, end)
-      }
+        date: Between(begin, end),
+      },
       // relations: {
       //   faculty: true,
       // },
@@ -149,7 +149,7 @@ class Repository {
       // @ts-ignore
       dtoPairs.push({
         ...pair,
-        date: new Date(pair.date).toISOString()
+        date: new Date(pair.date).toISOString(),
       });
     });
     return dtoPairs;
@@ -160,8 +160,8 @@ class Repository {
     try {
       const faculty = await this.typeorm.getRepository(FacultyEntity).findOne({
         where: {
-          id: pair.faculty.id
-        }
+          id: pair.faculty.id,
+        },
       });
 
       if (!faculty) {

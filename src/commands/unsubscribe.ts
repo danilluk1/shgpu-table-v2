@@ -8,19 +8,19 @@ export const unsubscribeCommand = async ({ sub }: { sub?: Subscriber }) => {
     if (!sub) {
       return {
         success: false,
-        message: "Вы ещё не подписаны на обновления."
+        message: "Вы ещё не подписаны на обновления.",
       };
     }
 
     await subsRepository.delete(sub.id);
     return {
       success: true,
-      message: "Вы успешно отписались от обновлений."
+      message: "Вы успешно отписались от обновлений.",
     };
   } catch (e) {
     return {
       success: false,
-      message: "Внутренняя ошибка сервера. Повторите попытку позже."
+      message: "Внутренняя ошибка сервера. Повторите попытку позже.",
     };
   }
 };

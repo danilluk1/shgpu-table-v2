@@ -1,6 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
-// import "source-map-support/register";
+import "source-map-support/register";
 import cron from "node-cron";
 import repository from "./db/repository";
 import telegramService from "./services/telegram";
@@ -9,6 +9,7 @@ import { downloadPage } from "./commons/download-page";
 import { getTopTablesLinks } from "./commons/get-top-tables-links";
 import { createParserByFaculty } from "./commons/createParserByFaculty";
 import { TelegramMessageSender } from "./services/telegram/message-sender";
+import vk from "./services/vk";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -25,8 +26,8 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
     {
       id: 11,
       name: "Институт информационных технологий,точных и естественных наук",
-      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/",
-    },
+      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/"
+    }
     // {
     //   id: 3,
     //   name: "Факультет физической культуры",
@@ -47,9 +48,7 @@ const checkTableForChangesAndBroadcast = async () => {
       const links: string[] = getTopTablesLinks(page, 3);
       for (const link of links) {
         const parser = createParserByFaculty(faculty.id);
-        console.log("123");
         const res = await parser.processTable(link);
-        console.log("123");
         if (res.isNew && res.isModified) {
           throw new Error("Error with parser during processing.");
         }
@@ -72,9 +71,6 @@ const checkTableForChangesAndBroadcast = async () => {
           }
         }
 
-        console.log(res);
-        console.log(message);
-
         if (message == "") return;
 
         const subs = await repository.getSubscribers(faculty.id);
@@ -82,12 +78,12 @@ const checkTableForChangesAndBroadcast = async () => {
           if (sub.subscribedToNotifications) {
             await TelegramMessageSender.sendMessage({
               target: sub.chatId,
-              message: message,
+              message: message
             });
           }
         }
       }
-      info(`Закончить парсить данные для ${faculty.name}`);
+      info(`Закончил парсить данные для ${faculty.name}`);
     }
   } catch (e) {
     error(e);
@@ -121,10 +117,13 @@ const start = async () => {
     await repository.connect();
   } catch (e) {
     error(e);
+    process.exit(1);
   }
 
   await telegramService.init();
   console.log("Bot has been started.");
+
+  await vk.init();
   // eslint-disable-next-line
   //await checkTableForChangesAndBroadcast();
 };

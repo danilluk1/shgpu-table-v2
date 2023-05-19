@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/danilluk1/shgpu-table-v2#readme",
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/node": "^20.2.0",
     "@types/node-cron": "^3.0.7",
     "@types/source-map-support": "^0.5.6",
@@ -47,12 +48,14 @@
   },
   "dependencies": {
     "@grammyjs/ratelimiter": "^1.1.6",
+    "@vk-io/hear": "^1.1.1",
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "grammy": "^1.16.0",
+    "lodash": "^4.17.21",
     "node-cron": "^3.0.2",
     "pg": "^8.11.0",
     "reflect-metadata": "^0.1.13",
@@ -60,6 +63,7 @@
     "source-map-support": "^0.5.21",
     "strip-ansi": "^6.0.1",
     "typeorm": "^0.3.16",
+    "vk-io": "^4.8.3",
     "xlsx": "^0.18.5"
   }
 }

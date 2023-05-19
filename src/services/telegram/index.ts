@@ -2,7 +2,7 @@ import { Bot, session } from "grammy";
 import { Context } from "./types";
 import { ServiceInterface } from "../_interface";
 import { Services } from "../../db/entities/Subscriber";
-import { error, warning } from "../../libs/logger";
+import { error, info, warning } from "../../libs/logger";
 import { limit } from "@grammyjs/ratelimiter";
 import { addSubscriberMiddleware } from "./middlewares/add-subscriber";
 import { subscribeComposer } from "./composers/subscribe";
@@ -19,7 +19,7 @@ class TelegramService extends ServiceInterface {
 
   constructor() {
     super({
-      service: Services.TELEGRAM,
+      service: Services.TELEGRAM
     });
 
     const accessToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -41,7 +41,7 @@ class TelegramService extends ServiceInterface {
         },
         keyGenerator: (ctx) => {
           return ctx.from?.id.toString();
-        },
+        }
       })
     );
     this.bot.use(addSubscriberMiddleware);
@@ -62,6 +62,7 @@ class TelegramService extends ServiceInterface {
   }
 
   async init() {
+    info("Telegram Service initialized.");
     this.bot.start();
   }
 }

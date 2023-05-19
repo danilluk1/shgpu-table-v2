@@ -10,6 +10,7 @@ import { getTopTablesLinks } from "./commons/get-top-tables-links";
 import { createParserByFaculty } from "./commons/createParserByFaculty";
 import { TelegramMessageSender } from "./services/telegram/message-sender";
 import vk from "./services/vk";
+import { Services } from "./db/entities/Subscriber";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -76,10 +77,17 @@ const checkTableForChangesAndBroadcast = async () => {
         const subs = await repository.getSubscribers(faculty.id);
         for (const sub of subs) {
           if (sub.subscribedToNotifications) {
-            await TelegramMessageSender.sendMessage({
-              target: sub.chatId,
-              message: message
-            });
+            if (sub.service === Services.TELEGRAM) {
+              await TelegramMessageSender.sendMessage({
+                target: sub.chatId,
+                message: message
+              });
+            } else {
+              await vk.sendMessage({
+                target: sub.chatId,
+                message: message
+              });
+            }
           }
         }
       }
@@ -121,11 +129,9 @@ const start = async () => {
   }
 
   await telegramService.init();
-  console.log("Bot has been started.");
-
   await vk.init();
   // eslint-disable-next-line
-  //await checkTableForChangesAndBroadcast();
+  await checkTableForChangesAndBroadcast();
 };
 
 start().catch(console.error);

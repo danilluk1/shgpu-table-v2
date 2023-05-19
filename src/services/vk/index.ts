@@ -202,12 +202,14 @@ class VK extends ServiceInterface {
       });
     }
   }
+
   async notFound(ctx: MessageContext) {
     ctx.send({
       message: "Я вас не понимаю."
     });
   }
-  async sendMessage(opts: SendMessageOpts) {
+
+  public async sendMessage(opts: SendMessageOpts) {
     const targets = Array.isArray(opts.target) ? opts.target : [opts.target];
     const chunks = chunk(
       targets.map((t) => Number(t)),

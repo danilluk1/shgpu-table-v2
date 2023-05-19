@@ -7,3 +7,4 @@ logs
 .pnpm-debug.log
 .vscode
 .idea
+storage

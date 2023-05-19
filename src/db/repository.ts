@@ -27,6 +27,14 @@ class Repository {
     return faculties;
   }
 
+  public async getSubscribers(faculty: FacultyId): Promise<Subscriber[]> {
+    const subs = await this.typeorm.getRepository(Subscriber).findBy({
+      facultyId: faculty,
+    });
+
+    return subs;
+  }
+
   public async findPairs(
     filter: string,
     begin: Date,
@@ -99,7 +107,6 @@ class Repository {
 
     const dtoPairs: Pair[] = [];
     pairs.forEach((pair) => {
-      // @ts-ignore
       dtoPairs.push({
         ...pair,
         date: new Date(pair.date).toISOString(),
@@ -146,7 +153,6 @@ class Repository {
     });
     const dtoPairs: Pair[] = [];
     pairs.forEach((pair) => {
-      // @ts-ignore
       dtoPairs.push({
         ...pair,
         date: new Date(pair.date).toISOString(),

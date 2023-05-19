@@ -5,14 +5,14 @@ export const getLinkCommand = (sub: Subscriber) => {
   if (!sub) {
     return {
       success: false,
-      message: "Сначала подпишитесь на одну из групп!"
+      message: "Сначала подпишитесь на одну из групп!",
     };
   }
 
   if (!sub.facultyId) {
     return {
       success: false,
-      message: "Не удалось найти информацию о вашем факультете!"
+      message: "Не удалось найти информацию о вашем факультете!",
     };
   }
 
@@ -20,11 +20,11 @@ export const getLinkCommand = (sub: Subscriber) => {
   if (!faculty) {
     return {
       success: false,
-      message: "Не удалось найти ваш факультет. Внутренняя ошибка."
+      message: "Не удалось найти ваш факультет. Внутренняя ошибка.",
     };
   }
   return {
     success: true,
-    message: faculty.link
+    message: faculty.link,
   };
 };

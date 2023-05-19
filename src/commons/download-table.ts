@@ -3,16 +3,16 @@ import axios from "axios";
 
 export const downloadTable = async (link: string, faculty: any) => {
   const tableName = link.split("/").pop();
-  const facultyPath = `${process.env.STORAGE_PATH}/${faculty.id}`;
+  const facultyPath = `${process.env.STORAGE_PATH}/${faculty}`;
 
   return axios.get(link, { responseType: "arraybuffer" }).then(({ data }) => {
     if (!fs.existsSync(facultyPath)) {
       fs.mkdirSync(facultyPath, {
-        recursive: true
+        recursive: true,
       });
     }
     fs.writeFileSync(facultyPath + "/" + tableName, data);
 
-    return facultyPath;
+    return facultyPath + "/" + tableName;
   });
 };

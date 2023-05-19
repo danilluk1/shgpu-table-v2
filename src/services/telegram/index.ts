@@ -12,6 +12,7 @@ import { startComposer } from "./composers/start";
 import { helpComposer } from "./composers/help";
 import { timeTableComposer } from "./composers/timeTable-composer";
 import { downloadComposer } from "./composers/download";
+import { findPairsComposer } from "./composers/find-pairs";
 
 class TelegramService extends ServiceInterface {
   bot: Bot<Context>;
@@ -50,6 +51,7 @@ class TelegramService extends ServiceInterface {
     this.bot.use(helpComposer);
     this.bot.use(timeTableComposer);
     this.bot.use(downloadComposer);
+    this.bot.use(findPairsComposer);
     // this.bot.use(getPairsComposer);
     // this.bot.use(getPairsByLectorComposer);
 

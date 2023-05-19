@@ -12,23 +12,23 @@ export class TelegramMessageSender {
           `TG [${target}]: ${opts.message}`.replace(/(\r\n|\n|\r)/gm, " ")
         );
       if (opts.image) {
-        TelegramService.bot.api
+        await TelegramService.bot.api
           .sendPhoto(target, opts.image, {
             caption: opts.message,
-            parse_mode: "HTML",
+            parse_mode: "HTML"
           })
           .then(() => log())
           .catch((e) => this.catchError(e, target));
       } else if (opts.kb) {
-        TelegramService.bot.api.sendMessage(target, opts.message, {
+        await TelegramService.bot.api.sendMessage(target, opts.message, {
           reply_markup: opts.kb,
           disable_web_page_preview: true,
-          parse_mode: "HTML",
+          parse_mode: "HTML"
         });
       } else {
-        TelegramService.bot.api.sendMessage(target, opts.message, {
+        await TelegramService.bot.api.sendMessage(target, opts.message, {
           disable_web_page_preview: true,
-          parse_mode: "HTML",
+          parse_mode: "HTML"
         });
       }
     }

@@ -12,6 +12,7 @@ class Repository {
 
   public async connect() {
     this.typeorm = await AppDataSource.initialize();
+    await this.typeorm.runMigrations();
   }
 
   public async getFaculty(id: number): Promise<FacultyEntity | null> {

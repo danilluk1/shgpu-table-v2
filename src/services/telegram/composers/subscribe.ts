@@ -12,11 +12,11 @@ subscribeComposer.hears(/Подпиши на \S+/i, async (ctx) => {
     sub: ctx.session.sub,
     chatId: ctx.chat.id,
     groupName,
-    service: Services.TELEGRAM
+    service: Services.TELEGRAM,
   });
 
   await TelegramMessageSender.sendMessage({
     target: ctx.chat.id,
-    message
+    message,
   });
 });

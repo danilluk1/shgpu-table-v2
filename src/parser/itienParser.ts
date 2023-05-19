@@ -5,7 +5,7 @@ import {
   saturdayPairs,
   thursdayPairs,
   tuesdayPairs,
-  wednesdayPairs
+  wednesdayPairs,
 } from "./../constants/itienTable";
 import XLSX, { Sheet } from "xlsx";
 import { itienGroups } from "../constants/groups";
@@ -47,7 +47,7 @@ export class ItienParser extends Parser {
         isModified: false,
         weekBegin: tableWeek.beginDate,
         weekEnd: tableWeek.endDate,
-        link: tableLink
+        link: tableLink,
       };
     } else if (
       localTableModifyDate != null &&
@@ -60,7 +60,7 @@ export class ItienParser extends Parser {
         isModified: true,
         weekBegin: tableWeek.beginDate,
         weekEnd: tableWeek.endDate,
-        link: tableLink
+        link: tableLink,
       };
     } else {
       await this.normalizeTable(newTablePath);
@@ -70,7 +70,7 @@ export class ItienParser extends Parser {
         isModified: false,
         weekBegin: tableWeek.beginDate,
         weekEnd: tableWeek.endDate,
-        link: tableLink
+        link: tableLink,
       };
     }
   }
@@ -104,7 +104,7 @@ export class ItienParser extends Parser {
     for (let r = range.s.r; r <= range.e.r; r++) {
       cell = XLSX.utils.encode_cell({
         c: groupColumn,
-        r: r
+        r: r,
       });
       if (sheet[cell]) {
         const pair = getPairAndDayByRow(
@@ -120,7 +120,7 @@ export class ItienParser extends Parser {
           pair.name = sheet[cell].w;
           const tempCell = XLSX.utils.encode_cell({
             c: groupColumn,
-            r: r - 1
+            r: r - 1,
           });
           if (sheet[tempCell]) {
             pair.name += ` ${sheet[tempCell].w}`;
@@ -130,7 +130,7 @@ export class ItienParser extends Parser {
             ).toISOString();
             pair.faculty = {
               id: this.id,
-              name: "Институт информационных технологий,точных и естественных наук"
+              name: "Институт информационных технологий,точных и естественных наук",
             };
             pair.groupName = groupName;
             repository
@@ -149,7 +149,7 @@ export class ItienParser extends Parser {
           ) {
             const cell = XLSX.utils.encode_cell({
               c: merged.s.c,
-              r: merged.s.r
+              r: merged.s.r,
             });
             if (!sheet[cell]) continue;
             const pair = getPairAndDayByRow(
@@ -165,7 +165,7 @@ export class ItienParser extends Parser {
               pair.name = sheet[cell].w;
               const tempCell = XLSX.utils.encode_cell({
                 c: merged.s.c,
-                r: merged.s.r - 1
+                r: merged.s.r - 1,
               });
               if (sheet[tempCell]) {
                 pair.name += ` ${sheet[tempCell].w}`;
@@ -175,7 +175,7 @@ export class ItienParser extends Parser {
                 ).toISOString();
                 pair.faculty = {
                   id: this.id,
-                  name: "Институт информационных технологий,точных и естественных наук"
+                  name: "Институт информационных технологий,точных и естественных наук",
                 };
                 pair.groupName = groupName;
                 repository

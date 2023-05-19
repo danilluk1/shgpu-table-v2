@@ -1,6 +1,7 @@
+/* eslint-disble */
 import * as fs from "fs";
 import XLSX, { Sheet, WorkBook } from "xlsx";
-import { TableInfo, Week, FacultyId } from "./../typings/index";
+import { TableInfo, FacultyId } from "./../typings/index";
 import { error } from "../libs/logger";
 
 export abstract class Parser {
@@ -14,7 +15,7 @@ export abstract class Parser {
 
   public async getTableModifyDate(
     tableName: string,
-    facultyId: number
+    facultyId: number,
   ): Promise<Date> {
     try {
       const path = `${process.env.STORAGE_PATH}/${facultyId}/${tableName}`;
@@ -34,7 +35,7 @@ export abstract class Parser {
   protected getGroupColumn(
     groupName: string,
     sheet: Sheet,
-    path: string
+    path: string,
   ): number {
     throw new Error("unimplemented getGroupColumn");
   }

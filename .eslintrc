@@ -24,7 +24,7 @@
     "comma-dangle": [2, "always-multiline"],
     "@typescript-eslint/no-explicit-any": "off",
     "brace-style": "error",
-    "object-curly-spacing": [2, "always"]
+    "object-curly-spacing": [2, "always"],
   },
   "parserOptions": {
     "ecmaFeatures": {
@@ -32,7 +32,7 @@
     },
     "useJSXTextNode": true,
     "project": ["./tsconfig.json"],
-    "tsconfigRootDir": "./"
+    "tsconfigRootDir": "./",
   },
   "ignorePatterns": ["src/migrations", "tests.ts", "tools"]
 }

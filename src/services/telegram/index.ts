@@ -1,4 +1,4 @@
-import { Bot, session } from "grammy";
+import { Bot } from "grammy";
 import { Context } from "./types";
 import { ServiceInterface } from "../_interface";
 import { Services } from "../../db/entities/Subscriber";
@@ -19,13 +19,13 @@ class TelegramService extends ServiceInterface {
 
   constructor() {
     super({
-      service: Services.TELEGRAM
+      service: Services.TELEGRAM,
     });
 
     const accessToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!accessToken) {
       warning(
-        "TELEGRAM: bot token not setuped, telegram library will not work."
+        "TELEGRAM: bot token not setuped, telegram library will not work.",
       );
       return;
     }
@@ -41,8 +41,8 @@ class TelegramService extends ServiceInterface {
         },
         keyGenerator: (ctx) => {
           return ctx.from?.id.toString();
-        }
-      })
+        },
+      }),
     );
     this.bot.use(addSubscriberMiddleware);
     this.bot.use(subscribeComposer);

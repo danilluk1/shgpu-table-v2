@@ -20,7 +20,7 @@ class VK extends ServiceInterface {
 
   constructor() {
     super({
-      service: Services.VK
+      service: Services.VK,
     });
   }
 
@@ -78,7 +78,7 @@ class VK extends ServiceInterface {
 
     ctx.send({
       message: message,
-      keyboard: kb
+      keyboard: kb,
     });
   }
 
@@ -87,7 +87,7 @@ class VK extends ServiceInterface {
     const { message } = helpCommand();
 
     ctx.send({
-      message
+      message,
     });
   }
 
@@ -96,34 +96,34 @@ class VK extends ServiceInterface {
     const { message } = helpCommand();
 
     ctx.send({
-      message
+      message,
     });
   }
 
   @command(/^⌚️ Звонки$/i, {
-    description: "Получить расписание занятий"
+    description: "Получить расписание занятий",
   })
   async getRings(ctx: MessageContext) {
     const { message } = getTimeTableCommand();
 
     ctx.send({
-      message: message
+      message: message,
     });
   }
 
   @command(/^Звонки$/i, {
-    description: "Получить расписание занятий"
+    description: "Получить расписание занятий",
   })
   async getRings2(ctx: MessageContext) {
     const { message } = getTimeTableCommand();
 
     ctx.send({
-      message: message
+      message: message,
     });
   }
 
   @command(/^Подпиши на \S+$/i, {
-    description: "Подписывает на изменения расписания группы"
+    description: "Подписывает на изменения расписания группы",
   })
   async newSub(ctx: MessageContext) {
     const text = ctx.text;
@@ -131,7 +131,7 @@ class VK extends ServiceInterface {
     const parts = text.split(" ");
     if (parts.length != 3) {
       ctx.send({
-        message: "Неверное использование команды."
+        message: "Неверное использование команды.",
       });
       return;
     }
@@ -143,30 +143,30 @@ class VK extends ServiceInterface {
       sub: sub,
       chatId: ctx.peerId,
       groupName: groupName,
-      service: Services.VK
+      service: Services.VK,
     });
 
     ctx.send({
-      message: message
+      message: message,
     });
   }
 
   @command(/^Забудь меня$/i, {
-    description: "Отписывает вас от получения уведомлений о расписании"
+    description: "Отписывает вас от получения уведомлений о расписании",
   })
   async deleteMe(ctx: MessageContext) {
     const sub = await repository.getVkSubscriber(ctx.peerId.toString());
     const { message } = await unsubscribeCommand({
-      sub: sub
+      sub: sub,
     });
 
     ctx.send({
-      message: message
+      message: message,
     });
   }
 
   @command(/^Скачать$/i, {
-    description: "Получить ссылку на расписание для вашего факультета"
+    description: "Получить ссылку на расписание для вашего факультета",
   })
   async getLink(ctx: MessageContext) {
     const sub = await repository.getVkSubscriber(ctx.peerId.toString());
@@ -175,7 +175,7 @@ class VK extends ServiceInterface {
   }
 
   @command(/^💾 Скачать$/i, {
-    description: "Получить ссылку на расписание для вашего факультета"
+    description: "Получить ссылку на расписание для вашего факультета",
   })
   async getLink2(ctx: MessageContext) {
     const sub = await repository.getVkSubscriber(ctx.peerId.toString());
@@ -184,28 +184,28 @@ class VK extends ServiceInterface {
   }
 
   @command(/^Пары на неделю$/i, {
-    description: "Возвращает пары на неделю, если пользователь уже подписан"
+    description: "Возвращает пары на неделю, если пользователь уже подписан",
   })
   async getWeekPairsForSub(ctx: MessageContext) {
     const sub = await repository.getVkSubscriber(ctx.peerId.toString());
     if (!sub) {
       ctx.send({
-        message: "Сначала подпишитесь."
+        message: "Сначала подпишитесь.",
       });
       return;
     }
 
-    const { messages, success } = await getPairsForWeekCommand(sub);
+    const { messages } = await getPairsForWeekCommand(sub);
     for (const message of messages) {
       await ctx.send({
-        message: message
+        message: message,
       });
     }
   }
 
   async notFound(ctx: MessageContext) {
     ctx.send({
-      message: "Я вас не понимаю."
+      message: "Я вас не понимаю.",
     });
   }
 
@@ -213,7 +213,7 @@ class VK extends ServiceInterface {
     const targets = Array.isArray(opts.target) ? opts.target : [opts.target];
     const chunks = chunk(
       targets.map((t) => Number(t)),
-      100
+      100,
     );
     const attachment = opts.image
       ? await this.uploadPhoto(opts.image)
@@ -224,7 +224,7 @@ class VK extends ServiceInterface {
         user_ids: chunk,
         message: opts.message,
         dont_parse_links: true,
-        attachment
+        attachment,
       });
     }
   }
@@ -232,8 +232,8 @@ class VK extends ServiceInterface {
   async uploadPhoto(source: string) {
     return await this.bot.upload.messagePhoto({
       source: {
-        value: source
-      }
+        value: source,
+      },
     });
   }
 }

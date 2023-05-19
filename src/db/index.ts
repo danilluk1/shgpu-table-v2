@@ -16,6 +16,6 @@ export const AppDataSource = new DataSource({
   url: process.env.DB_CONN,
   entities: [Group, Pair, Faculty, Lector, Subscriber],
   migrations: [__dirname + "/migrations/**/*.ts"],
-  migrationsTableName: "typeorm_migrations"
+  migrationsTableName: "typeorm_migrations",
   // logging: true
 });

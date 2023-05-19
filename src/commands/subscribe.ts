@@ -9,7 +9,7 @@ export const subscribeCommand = async ({
   sub,
   chatId,
   groupName,
-  service
+  service,
 }: {
   sub?: Subscriber;
   chatId: number;
@@ -20,7 +20,7 @@ export const subscribeCommand = async ({
     if (sub) {
       return {
         success: false,
-        message: "Вы уже подписаны на одну из групп, сначала отпишитесь."
+        message: "Вы уже подписаны на одну из групп, сначала отпишитесь.",
       };
     }
 
@@ -28,7 +28,7 @@ export const subscribeCommand = async ({
     if (!group) {
       return {
         success: false,
-        message: "Не удалось найти группу с таким названием!"
+        message: "Не удалось найти группу с таким названием!",
       };
     }
 
@@ -42,13 +42,13 @@ export const subscribeCommand = async ({
 
     return {
       success: true,
-      message: `Теперь вы подписаны на группу ${groupName}`
+      message: `Теперь вы подписаны на группу ${groupName}`,
     };
   } catch (e) {
     error(e);
     return {
       success: false,
-      message: "Внутренняя ошибка сервера. Повторите попытку позже."
+      message: "Внутренняя ошибка сервера. Повторите попытку позже.",
     };
   }
 };

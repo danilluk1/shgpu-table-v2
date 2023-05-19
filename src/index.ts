@@ -27,8 +27,8 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
     {
       id: 11,
       name: "Институт информационных технологий,точных и естественных наук",
-      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/"
-    }
+      link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/",
+    },
     // {
     //   id: 3,
     //   name: "Факультет физической культуры",
@@ -80,12 +80,12 @@ const checkTableForChangesAndBroadcast = async () => {
             if (sub.service === Services.TELEGRAM) {
               await TelegramMessageSender.sendMessage({
                 target: sub.chatId,
-                message: message
+                message: message,
               });
             } else {
               await vk.sendMessage({
                 target: sub.chatId,
-                message: message
+                message: message,
               });
             }
           }

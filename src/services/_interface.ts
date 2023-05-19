@@ -36,7 +36,7 @@ export class ServiceInterface {
     const repository = AppDataSource.getRepository(Subscriber);
     const chats = (
       await repository.findBy({
-        id: In(targets.map((t) => t.toString()))
+        id: In(targets.map((t) => t.toString())),
       })
     ).map((c) => c.id);
     this.sendMessage({ target: chats, ...opts });

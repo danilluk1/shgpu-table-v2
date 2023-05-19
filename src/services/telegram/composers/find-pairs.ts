@@ -12,7 +12,7 @@ findPairsComposer.hears(/Пары на неделю/i, async (ctx) => {
       "Сначала подпишитесь на одну из групп, чтобы использовать короткую команду.";
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
-      message: msg
+      message: msg,
     });
     return;
   }
@@ -21,7 +21,7 @@ findPairsComposer.hears(/Пары на неделю/i, async (ctx) => {
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
-      message: message
+      message: message,
     });
   }
 });
@@ -33,7 +33,7 @@ findPairsComposer.hears(/Пары \S+ на неделю/i, async (ctx) => {
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
-      message: message
+      message: message,
     });
   }
 });

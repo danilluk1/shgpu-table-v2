@@ -6,12 +6,12 @@ export interface CommandDecoratorOptions {
 }
 
 export function command(
-  name: string,
+  filter: RegExp,
   opts: CommandDecoratorOptions
 ): MethodDecorator {
   return (instance: ServiceInterface, methodName: string): void => {
     if (!instance.commands) instance.commands = [];
-    const data = { name, fnc: methodName, ...opts };
+    const data = { filter, fnc: methodName, ...opts };
 
     instance.commands.push(data);
   };

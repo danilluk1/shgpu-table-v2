@@ -15,7 +15,7 @@ export const services: ServiceInterface[] = [];
 export class ServiceInterface {
   inited = false;
   service!: Services;
-  commands: Array<{ name: string; fnc: string } & CommandDecoratorOptions>;
+  commands: Array<{ filter: RegExp; fnc: string } & CommandDecoratorOptions>;
 
   constructor({ service }: { service: Services }) {
     services.push(this);

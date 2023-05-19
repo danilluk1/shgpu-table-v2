@@ -1,12 +1,18 @@
 import { Services } from "../../db/entities/Subscriber";
 import { SendMessageOpts, ServiceInterface } from "../_interface";
-import { VK as VKIO, MessageContext, Keyboard } from "vk-io";
+import { VK as VKIO, MessageContext } from "vk-io";
 import { HearManager } from "@vk-io/hear";
 import { chatIn, error, info, warning } from "../../libs/logger";
 import { chunk } from "lodash";
 import repository from "../../db/repository";
 import { command } from "../../decorators/command";
 import { startVKCommand } from "../../commands/startVK";
+import { helpCommand } from "../../commands/help";
+import { subscribeCommand } from "../../commands/subscribe";
+import { unsubscribeCommand } from "../../commands/unsubscribe";
+import { getTimeTableCommand } from "../../commands/get-timeTable";
+import { getPairsForWeekCommand } from "../../commands/get-pairs-weekly";
+import { getLinkCommand } from "../../commands/get-link";
 
 class VK extends ServiceInterface {
   bot: VKIO;
@@ -35,10 +41,9 @@ class VK extends ServiceInterface {
 
         await this.ensureUser(ctx);
         await this.listener(ctx);
-
         next();
       });
-      this.bot.updates.on("messge_new", this.hearManager.middleware);
+      this.bot.updates.on("message_new", this.hearManager.middleware);
 
       await this.bot.updates.start();
       info("VK Service initialized.");
@@ -57,7 +62,7 @@ class VK extends ServiceInterface {
     if (!msg.hasText) return;
     const commandName = msg.text;
 
-    const command = this.commands.find((c) => c.name === commandName);
+    const command = this.commands.find((c) => commandName.match(c.filter));
     if (!command) {
       await this["notFound"](msg);
       return;
@@ -67,7 +72,7 @@ class VK extends ServiceInterface {
     return true;
   }
 
-  @command("/start", { description: "Начать пользоваться ботом" })
+  @command(/^\/start$/i, { description: "Начать пользоваться ботом" })
   async start(ctx: MessageContext) {
     const { message, kb } = startVKCommand();
 
@@ -77,6 +82,131 @@ class VK extends ServiceInterface {
     });
   }
 
+  @command(/^\/help$/i, { description: "Помощь" })
+  async help(ctx: MessageContext) {
+    const { message } = helpCommand();
+
+    ctx.send({
+      message
+    });
+  }
+
+  @command(/^Помощь$/i, { description: "Помощь" })
+  async help2(ctx: MessageContext) {
+    const { message } = helpCommand();
+
+    ctx.send({
+      message
+    });
+  }
+
+  @command(/^⌚️ Звонки$/i, {
+    description: "Получить расписание занятий"
+  })
+  async getRings(ctx: MessageContext) {
+    const { message } = getTimeTableCommand();
+
+    ctx.send({
+      message: message
+    });
+  }
+
+  @command(/^Звонки$/i, {
+    description: "Получить расписание занятий"
+  })
+  async getRings2(ctx: MessageContext) {
+    const { message } = getTimeTableCommand();
+
+    ctx.send({
+      message: message
+    });
+  }
+
+  @command(/^Подпиши на \S+$/i, {
+    description: "Подписывает на изменения расписания группы"
+  })
+  async newSub(ctx: MessageContext) {
+    const text = ctx.text;
+
+    const parts = text.split(" ");
+    if (parts.length != 3) {
+      ctx.send({
+        message: "Неверное использование команды."
+      });
+      return;
+    }
+
+    const groupName = parts[2];
+    const sub = await repository.getVkSubscriber(ctx.peerId.toString());
+
+    const { message } = await subscribeCommand({
+      sub: sub,
+      chatId: ctx.peerId,
+      groupName: groupName,
+      service: Services.VK
+    });
+
+    ctx.send({
+      message: message
+    });
+  }
+
+  @command(/^Забудь меня$/i, {
+    description: "Отписывает вас от получения уведомлений о расписании"
+  })
+  async deleteMe(ctx: MessageContext) {
+    const sub = await repository.getVkSubscriber(ctx.peerId.toString());
+    const { message } = await unsubscribeCommand({
+      sub: sub
+    });
+
+    ctx.send({
+      message: message
+    });
+  }
+
+  @command(/^Скачать$/i, {
+    description: "Получить ссылку на расписание для вашего факультета"
+  })
+  async getLink(ctx: MessageContext) {
+    const sub = await repository.getVkSubscriber(ctx.peerId.toString());
+    const { message } = getLinkCommand(sub);
+    ctx.send({ message: message });
+  }
+
+  @command(/^💾 Скачать$/i, {
+    description: "Получить ссылку на расписание для вашего факультета"
+  })
+  async getLink2(ctx: MessageContext) {
+    const sub = await repository.getVkSubscriber(ctx.peerId.toString());
+    const { message } = getLinkCommand(sub);
+    ctx.send({ message: message });
+  }
+
+  @command(/^Пары на неделю$/i, {
+    description: "Возвращает пары на неделю, если пользователь уже подписан"
+  })
+  async getWeekPairsForSub(ctx: MessageContext) {
+    const sub = await repository.getVkSubscriber(ctx.peerId.toString());
+    if (!sub) {
+      ctx.send({
+        message: "Сначала подпишитесь."
+      });
+      return;
+    }
+
+    const { messages, success } = await getPairsForWeekCommand(sub);
+    for (const message of messages) {
+      await ctx.send({
+        message: message
+      });
+    }
+  }
+  async notFound(ctx: MessageContext) {
+    ctx.send({
+      message: "Я вас не понимаю."
+    });
+  }
   async sendMessage(opts: SendMessageOpts) {
     const targets = Array.isArray(opts.target) ? opts.target : [opts.target];
     const chunks = chunk(

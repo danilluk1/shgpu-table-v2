@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import repository from "../db/repository";
 import { formatPairs } from "../commons/formatPairs";
 
-export const getPairsFortWeekCommand = async (
+export const getPairsForWeekCommand = async (
   sub: Subscriber,
   findFilter?: string
 ) => {

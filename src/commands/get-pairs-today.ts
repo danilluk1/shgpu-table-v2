@@ -13,7 +13,7 @@ export const getPairsForDayCommand = async (
   }
 
   const todayStart = dayjs().startOf("day");
-  const todayEnd = todayStart.clone().endOf("day");
+  const todayEnd = todayStart.clone().endOf("day"); 
 
   const pairs = await repository.findPairs(
     filter,

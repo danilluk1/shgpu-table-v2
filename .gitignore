@@ -8,3 +8,5 @@ logs
 .vscode
 .idea
 storage
+coverage
+coverage.lcov

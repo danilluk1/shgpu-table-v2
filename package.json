@@ -4,7 +4,8 @@
   "description": "Improving students experience with the table.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "prestart": "pnpm run migration:up",
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -40,11 +41,13 @@
     "@types/source-map-support": "^0.5.6",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
+    "@vitest/coverage-c8": "^0.31.1",
     "eslint": "^8.40.0",
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.1"
   },
   "dependencies": {
     "@grammyjs/ratelimiter": "^1.1.6",

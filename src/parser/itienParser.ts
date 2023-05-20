@@ -20,18 +20,16 @@ import { getPairAndDayByRow } from "../commons/getPairAndDayByRow";
 import { FacultyId, TableInfo, Week } from "../typings";
 
 export class ItienParser extends Parser {
-  private faculty: Faculty | null;
   constructor() {
     super(FacultyId.ITIEN);
   }
 
   public async processTable(tableLink: string): Promise<TableInfo> {
-    this.faculty = await repository.getFaculty(FacultyId.ITIEN);
     const tableName = getTableNameFromLink(tableLink);
 
     const localTableModifyDate = await getLocalCopyModifyDate(
       tableName,
-      this.id
+      this.id,
     );
     const newTablePath = await downloadTable(tableLink, this.id);
     const newTableModifyDate = await getLocalCopyModifyDate(tableName, this.id);
@@ -86,15 +84,13 @@ export class ItienParser extends Parser {
     for (const group of itienGroups) {
       await this.normalizeTableForGroup(tableWeek, group, sheet);
     }
-    console.log(
-      `Обработана таблица ${tableName} для факультета: ${this.faculty?.name}`
-    );
+    console.log(`Обработана таблица ${tableName} для факультета: ${this.id}`);
   }
 
   private async normalizeTableForGroup(
     tableWeek: Week,
     groupName: string,
-    sheet: Sheet
+    sheet: Sheet,
   ) {
     const range = XLSX.utils.decode_range(sheet["!ref"] as string);
     const groupColumn = this.getGroupColumn(groupName, sheet);
@@ -114,7 +110,7 @@ export class ItienParser extends Parser {
           wednesdayPairs,
           thursdayPairs,
           fridayPairs,
-          saturdayPairs
+          saturdayPairs,
         );
         if (pair) {
           pair.name = sheet[cell].w;
@@ -126,7 +122,7 @@ export class ItienParser extends Parser {
             pair.name += ` ${sheet[tempCell].w}`;
             pair.date = addDays(
               tableWeek.beginDate,
-              pair.day - 1
+              pair.day - 1,
             ).toISOString();
             pair.faculty = {
               id: this.id,
@@ -159,7 +155,7 @@ export class ItienParser extends Parser {
               wednesdayPairs,
               thursdayPairs,
               fridayPairs,
-              saturdayPairs
+              saturdayPairs,
             );
             if (pair) {
               pair.name = sheet[cell].w;
@@ -171,7 +167,7 @@ export class ItienParser extends Parser {
                 pair.name += ` ${sheet[tempCell].w}`;
                 pair.date = addDays(
                   tableWeek.beginDate,
-                  pair.day - 1
+                  pair.day - 1,
                 ).toISOString();
                 pair.faculty = {
                   id: this.id,

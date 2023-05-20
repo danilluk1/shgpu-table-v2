@@ -13,7 +13,7 @@ export abstract class Parser {
     this.id = facultyId;
   }
 
-  public async getTableModifyDate(
+  protected async getTableModifyDate(
     tableName: string,
     facultyId: number,
   ): Promise<Date> {

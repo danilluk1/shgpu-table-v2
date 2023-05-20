@@ -17,7 +17,7 @@ export class TelegramMessageSender {
             parse_mode: "HTML",
           })
           .then(() => log())
-          .catch((e) => this.catchError(e, target));
+          .catch((e) => this.catchError(e));
       } else if (opts.kb) {
         await TelegramService.bot.api.sendMessage(target, opts.message, {
           reply_markup: opts.kb,

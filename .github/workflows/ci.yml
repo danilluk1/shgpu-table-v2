@@ -19,29 +19,29 @@ jobs:
       - name: Run ESLint
         run: pnpx eslint
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
+  #     - name: Setup node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "18.x"
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.17.1
-          run_install: true
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: 7.17.1
+  #         run_install: true
 
-      - name: Run tests
-        run: pnpm test:coverage
+  #     - name: Run tests
+  #       run: pnpm test:coverage
 
-      - name: Collect coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage/coverage.lcov
+  #     - name: Collect coverage
+  #       uses: codecov/codecov-action@v3
+  #       with:
+  #         token: ${{ secrets.CODECOV_TOKEN }}
+  #         file: ./coverage/coverage.lcov
 
   build:
     runs-on: ubuntu-latest

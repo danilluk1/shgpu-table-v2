@@ -11,6 +11,11 @@ import { createParserByFaculty } from "./commons/createParserByFaculty";
 import { TelegramMessageSender } from "./services/telegram/message-sender";
 import vk from "./services/vk";
 import { Services } from "./db/entities/Subscriber";
+import { WrongLinkProvidedError } from "./parser/errors/wrong-link-provided.error";
+import { TableDownloadError } from "./parser/errors/table-download.error";
+import { AxiosError } from "axios";
+import { WrongTableNameError } from "./parser/errors/wrong-table-name.error";
+import { TableParsingError } from "./parser/errors/table-parsing.error";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -44,50 +49,84 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
 const checkTableForChangesAndBroadcast = async () => {
   try {
     for (const faculty of supportedFaculties) {
-      // info(`Начинаю парсить данные для ${faculty.name}`);
+      info(`Начинаю парсить данные для ${faculty.name}`);
       const page: string = await downloadPage(faculty.link);
       const links: string[] = getTopTablesLinks(page, 3);
       for (const link of links) {
         const parser = createParserByFaculty(faculty.id);
-        const res = await parser.processTable(link);
-        if (res.isNew && res.isModified) {
-          throw new Error("Error with parser during processing.");
-        }
+        let res = null;
+        try {
+          res = await parser.processTable(link);
 
-        let message = "";
-        const curTime = new Date();
-        if (res.isNew) {
-          if (curTime > res.weekBegin && curTime < res.weekEnd) {
-            message = `Появилось расписание на текущую неделю, вы можете получить расписание по ссылке ${res.link} или введя команду: пары на неделю`;
-          } else if (curTime < res.weekBegin) {
-            message = `Появилось расписание на следущую неделю, вы можете получить расписание по ссылке ${res.link} или введя команду: пары на след неделю`;
+          if (res.isNew && res.isModified) {
+            throw new Error("Error with parser during processing.");
           }
-        }
-
-        if (res.isModified) {
-          if (curTime > res.weekBegin && curTime < res.weekEnd) {
-            message = `Обновилось расписание на текущую неделю, вы можете получить расписание по ссылке ${link} или введя команду: пары на неделю`;
-          } else if (curTime < res.weekBegin) {
-            message = `Обновилось расписание на следущую неделю, вы можете получить расписание по ссылке ${link} или введя команду: пары на след неделю`;
-          }
-        }
-
-        if (message == "") return;
-
-        const subs = await repository.getSubscribers(faculty.id);
-        for (const sub of subs) {
-          if (sub.subscribedToNotifications) {
-            if (sub.service === Services.TELEGRAM) {
-              await TelegramMessageSender.sendMessage({
-                target: sub.chatId,
-                message: message,
-              });
-            } else {
-              await vk.sendMessage({
-                target: sub.chatId,
-                message: message,
-              });
+          let message = "";
+          const curTime = new Date();
+          if (res.isNew) {
+            if (curTime > res.weekBegin && curTime < res.weekEnd) {
+              message = `Появилось расписание на текущую неделю, вы можете получить расписание по ссылке ${res.link} или введя команду: пары на неделю`;
+            } else if (curTime < res.weekBegin) {
+              message = `Появилось расписание на следущую неделю, вы можете получить расписание по ссылке ${res.link} или введя команду: пары на след неделю`;
             }
+          }
+
+          if (res.isModified) {
+            if (curTime > res.weekBegin && curTime < res.weekEnd) {
+              message = `Обновилось расписание на текущую неделю, вы можете получить расписание по ссылке ${link} или введя команду: пары на неделю`;
+            } else if (curTime < res.weekBegin) {
+              message = `Обновилось расписание на следущую неделю, вы можете получить расписание по ссылке ${link} или введя команду: пары на след неделю`;
+            }
+          }
+
+          if (message == "") return;
+
+          try {
+            const subs = await repository.getSubscribers(faculty.id);
+            for (const sub of subs) {
+              if (sub.subscribedToNotifications) {
+                if (sub.service === Services.TELEGRAM) {
+                  await TelegramMessageSender.sendMessage({
+                    target: sub.chatId,
+                    message: message,
+                  });
+                } else {
+                  await vk.sendMessage({
+                    target: sub.chatId,
+                    message: message,
+                  });
+                }
+              }
+            }
+          } catch (err) {
+            error(err);
+          }
+        } catch (err) {
+          error(err);
+          if (err instanceof WrongLinkProvidedError) {
+            /*
+              TODO: make announcement that bot is broken
+             */
+          } else if (err instanceof TableDownloadError) {
+            const tdError = err as TableDownloadError;
+            if (tdError?.caused instanceof AxiosError) {
+              /*
+                TODO: сделать обработку того, когда по какой-то причине не удалось скачать расписание
+               */
+            } else {
+              /*
+                TODO: сделать ошибку, когда не удалось скачать файл из-за внутренней ошибки в папке
+               */
+            }
+          } else if (err instanceof WrongTableNameError) {
+            /*
+              TODO: make announcement that bot is broken
+             */
+          } else if (err instanceof TableParsingError) {
+            /*
+                TODO: сделать обработку того, что мы не смогли распарсить данные, тут поидее надо восстановить данные из бэкапа,
+                только его надо сделать предварительно
+            */
           }
         }
       }

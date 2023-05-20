@@ -1,4 +1,4 @@
-name: ESLINT
+name: CI
 on:
   push:
     branches:

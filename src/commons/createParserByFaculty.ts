@@ -1,7 +1,7 @@
-import { ItienParser } from "../parser/itienParser.js";
-import { Parser } from "../parser/parser.js";
+import { BaseParser } from "../parser/base-parser";
+import { ItienParser } from "../parser/itien-parser";
 
-export const createParserByFaculty = (facultyId: number): Parser | null => {
+export const createParserByFaculty = (facultyId: number): BaseParser | null => {
   switch (facultyId) {
     // case 12:
     //   return new GymParser(path);

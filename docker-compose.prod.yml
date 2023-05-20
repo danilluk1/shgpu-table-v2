@@ -1,0 +1,14 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    networks:
+      - shgpu-table-dev
+    env_file:
+      - ./.env.docker
+  postgres:
+    container_name: postgres
+    image: postgres:14.1-alpine
+    environment:
+      - name=value

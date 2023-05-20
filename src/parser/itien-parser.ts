@@ -1,4 +1,5 @@
-import { Parser } from "./parser";
+import XLSX, { Sheet } from "xlsx";
+import { getTableWeekFromName } from "../commons/getTableWeekFromName";
 import {
   fridayPairs,
   mondayPairs,
@@ -7,84 +8,88 @@ import {
   tuesdayPairs,
   wednesdayPairs,
 } from "./../constants/itienTable";
-import XLSX, { Sheet } from "xlsx";
+import { FacultyId, TableInfo, Week } from "../typings";
+import { BaseParser } from "./base-parser";
+import { WrongLinkProvidedError } from "./errors/wrong-link-provided.error";
+import { TableParsingError } from "./errors/table-parsing.error";
 import { itienGroups } from "../constants/groups";
 import { addDays } from "date-fns";
 import repository from "../db/repository";
-import { Faculty } from "../db/entities/Faculty";
-import { getTableNameFromLink } from "../commons/getTableNameFromLink";
-import { getLocalCopyModifyDate } from "../commons/getLocalCopyModifyDate";
-import { downloadTable } from "../commons/download-table";
-import { getTableWeekFromName } from "../commons/getTableWeekFromName";
 import { getPairAndDayByRow } from "../commons/getPairAndDayByRow";
-import { FacultyId, TableInfo, Week } from "../typings";
 
-export class ItienParser extends Parser {
+export class ItienParser extends BaseParser {
   constructor() {
     super(FacultyId.ITIEN);
   }
 
-  public async processTable(tableLink: string): Promise<TableInfo> {
-    const tableName = getTableNameFromLink(tableLink);
+  public async processTable(linkTo: string): Promise<TableInfo> {
+    const tableName = linkTo.split("/").pop();
+    if (!tableName) {
+      throw new WrongLinkProvidedError(linkTo);
+    }
 
-    const localTableModifyDate = await getLocalCopyModifyDate(
-      tableName,
-      this.id,
-    );
-    const newTablePath = await downloadTable(tableLink, this.id);
-    const newTableModifyDate = await getLocalCopyModifyDate(tableName, this.id);
+    const tablePath = `${this.facultyStoragePath}/${tableName}`;
+
+    const localTableModifyDate = await this.getTableModifyDate(tablePath);
+
+    await this.downloadTable(linkTo);
+    const downloadedTableModifyDate = await this.getTableModifyDate(tablePath);
     const tableWeek = getTableWeekFromName(tableName);
+    /*
+      If we have copy of downloaded table locally, and table wasn't updated.
+     */
     if (
-      localTableModifyDate != null &&
-      localTableModifyDate === newTableModifyDate
+      localTableModifyDate !== null &&
+      localTableModifyDate === downloadedTableModifyDate
     ) {
-      await this.normalizeTable(newTablePath);
-      return {
-        facultyId: this.id,
-        isNew: false,
-        isModified: false,
-        weekBegin: tableWeek.beginDate,
-        weekEnd: tableWeek.endDate,
-        link: tableLink,
-      };
+      await this.normalizeTable(tablePath);
+      return this.createNewTableInfo(
+        false,
+        false,
+        tableWeek.beginDate,
+        tableWeek.endDate,
+        linkTo,
+      );
     } else if (
-      localTableModifyDate != null &&
-      localTableModifyDate !== newTableModifyDate
+      /*
+      If we have copy of downloaded table locally, and table was updated
+     */
+      localTableModifyDate !== null &&
+      localTableModifyDate !== downloadedTableModifyDate
     ) {
-      await this.normalizeTable(newTablePath);
-      return {
-        facultyId: this.id,
-        isNew: false,
-        isModified: true,
-        weekBegin: tableWeek.beginDate,
-        weekEnd: tableWeek.endDate,
-        link: tableLink,
-      };
+      await this.normalizeTable(tablePath);
+      return this.createNewTableInfo(
+        false,
+        true,
+        tableWeek.beginDate,
+        tableWeek.endDate,
+        linkTo,
+      );
     } else {
-      await this.normalizeTable(newTablePath);
-      return {
-        facultyId: this.id,
-        isNew: true,
-        isModified: false,
-        weekBegin: tableWeek.beginDate,
-        weekEnd: tableWeek.endDate,
-        link: tableLink,
-      };
+      await this.normalizeTable(tablePath);
+      return this.createNewTableInfo(
+        true,
+        false,
+        tableWeek.beginDate,
+        tableWeek.endDate,
+        linkTo,
+      );
     }
   }
 
-  private async normalizeTable(path: string) {
-    const tableName = getTableNameFromLink(path);
+  private async normalizeTable(pathTo: string) {
+    const tableName = pathTo.split("/").pop();
     const tableWeek = getTableWeekFromName(tableName);
-    const workbook = XLSX.readFile(path);
-    const sheet = workbook.Sheets[workbook.SheetNames[0] as string];
+
+    const wb = XLSX.readFile(pathTo);
+    const sheet = wb.Sheets[wb.SheetNames[0] as string];
     if (!sheet) {
-      throw new Error("Can't process table");
+      throw new TableParsingError(`Cannot open sheet for this ${pathTo}`);
     }
+
     for (const group of itienGroups) {
       await this.normalizeTableForGroup(tableWeek, group, sheet);
     }
-    console.log(`Обработана таблица ${tableName} для факультета: ${this.id}`);
   }
 
   private async normalizeTableForGroup(
@@ -174,11 +179,26 @@ export class ItienParser extends Parser {
                   name: "Институт информационных технологий,точных и естественных наук",
                 };
                 pair.groupName = groupName;
-                repository
-                  .removePairs(tableWeek.beginDate, tableWeek.endDate, this.id)
-                  .then(async () => {
-                    await repository.addPair(pair);
-                  });
+                try {
+                  await repository.removePairs(
+                    tableWeek.beginDate,
+                    tableWeek.endDate,
+                    this.id,
+                  );
+                } catch (e) {
+                  throw new TableParsingError(
+                    "Failed to remove pairs, so parser might be broken.",
+                    e,
+                  );
+                }
+                try {
+                  await repository.addPair(pair);
+                } catch (e) {
+                  throw new TableParsingError(
+                    "Failed to add pairs, so parser might be broken.",
+                    e,
+                  );
+                }
               }
             }
             break;
@@ -202,6 +222,6 @@ export class ItienParser extends Parser {
       }
     }
 
-    return 0;
+    return -1;
   }
 }

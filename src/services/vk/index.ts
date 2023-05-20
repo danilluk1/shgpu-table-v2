@@ -1,6 +1,6 @@
 import { Services } from "../../db/entities/Subscriber";
 import { SendMessageOpts, ServiceInterface } from "../_interface";
-import { VK as VKIO, MessageContext } from "vk-io";
+import { VK as VKIO, MessageContext, APIError, VKError } from "vk-io";
 import { HearManager } from "@vk-io/hear";
 import { chatIn, error, info, warning } from "../../libs/logger";
 import { chunk } from "lodash";
@@ -58,17 +58,29 @@ class VK extends ServiceInterface {
     ctx.sub = sub;
   }
 
-  async listener(msg: MessageContext) {
-    if (!msg.hasText) return;
-    const commandName = msg.text;
+  async listener(ctx: MessageContext) {
+    if (!ctx.hasText) return;
+    const commandName = ctx.text;
 
     const command = this.commands.find((c) => commandName.match(c.filter));
     if (!command) {
-      await this["notFound"](msg);
+      await this["notFound"](ctx);
       return;
     }
 
-    await this[command.fnc](msg);
+    try {
+      await this[command.fnc](ctx);
+    } catch (e) {
+      if (e instanceof VKError) {
+        ctx.send({
+          message: "Ошибка на стороне Вконтакте. Попробуйте позже.",
+        });
+      }
+      ctx.send({
+        message: "Внутренняя ошибка серевера. Мы уже работаем над этим.",
+      });
+      error(e);
+    }
     return true;
   }
 

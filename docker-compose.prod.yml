@@ -5,8 +5,8 @@ services:
       dockerfile: ./Dockerfile
     networks:
       - shgpu-table
-    environment:
-      - DOPPLER_TOKEN=${DOPPLER_TOKEN}
+    env_file:
+      - ./env.docker
   postgres:
     container_name: postgres
     image: postgres:15.1-alpine

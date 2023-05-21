@@ -13,10 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     setps:
-    - name: Install ssh keys
-      run: |
+      - name: Install ssh keys
+        run: |
 
-jobs:
   deploy:
     runs-on: ubuntu-latest
 
@@ -32,5 +31,3 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose -f docker-compose.prod.yml up -d && exit"
       - name: cleanup
         run: rm -rf ~/.ssh
-
-

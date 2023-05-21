@@ -4,11 +4,41 @@ services:
       context: .
       dockerfile: ./Dockerfile
     networks:
-      - shgpu-table-dev
-    env_file:
-      - ./.env.docker
+      - shgpu-table
+    environment:
+      - DOPPLER_TOKEN=${DOPPLER_TOKEN}
   postgres:
     container_name: postgres
-    image: postgres:14.1-alpine
+    image: postgres:15.1-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment:
-      - name=value
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=shgpu_table
+    ports:
+      - 54326:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shgpu_table"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - shgpu-table
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8085:8080"
+    environment:
+      - ADMINER_PLUGINS=enum-types enum-option json-column
+    networks:
+      - shgpu-table
+networks:
+  shgpu-table:
+    driver: bridge
+
+volumes:
+  postgres-data:

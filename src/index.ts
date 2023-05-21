@@ -57,7 +57,6 @@ const checkTableForChangesAndBroadcast = async () => {
         let res = null;
         try {
           res = await parser.processTable(link);
-
           if (res.isNew && res.isModified) {
             throw new Error("Error with parser during processing.");
           }

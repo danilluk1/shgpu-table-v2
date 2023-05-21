@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env sh
+
 cd /app
 
 if [ -z "$DOCKER_DEBUG" ]

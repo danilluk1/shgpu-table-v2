@@ -134,11 +134,15 @@ export class ItienParser extends BaseParser {
               name: "Институт информационных технологий,точных и естественных наук",
             };
             pair.groupName = groupName;
-            repository
-              .removePairs(tableWeek.beginDate, tableWeek.endDate, this.id)
-              .then(async () => {
-                await repository.addPair(pair);
-              });
+            try {
+              console.log(pair.name);
+              await repository.addPair(pair);
+            } catch (e) {
+              throw new TableParsingError(
+                "Failed to add pairs, so parser might be broken.",
+                e,
+              );
+            }
           }
         }
       } else {
@@ -180,18 +184,7 @@ export class ItienParser extends BaseParser {
                 };
                 pair.groupName = groupName;
                 try {
-                  await repository.removePairs(
-                    tableWeek.beginDate,
-                    tableWeek.endDate,
-                    this.id,
-                  );
-                } catch (e) {
-                  throw new TableParsingError(
-                    "Failed to remove pairs, so parser might be broken.",
-                    e,
-                  );
-                }
-                try {
+                  console.log(pair.name);
                   await repository.addPair(pair);
                 } catch (e) {
                   throw new TableParsingError(

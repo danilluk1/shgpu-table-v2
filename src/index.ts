@@ -16,7 +16,8 @@ import { TableDownloadError } from "./parser/errors/table-download.error";
 import { AxiosError } from "axios";
 import { WrongTableNameError } from "./parser/errors/wrong-table-name.error";
 import { TableParsingError } from "./parser/errors/table-parsing.error";
-import { ru } from "date-fns/locale";
+import { getPairsForTomorrowCommand } from "./commands/get-pairs-tommorow";
+import { getPairsForTodayCommand } from "./commands/get-pairs-today";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -79,7 +80,10 @@ const checkTableForChangesAndBroadcast = async () => {
             }
           }
 
-          if (message == "") return;
+          if (message == "") {
+            info(`Закончил парсить данные для ${faculty.name}`);
+            return;
+          }
 
           try {
             const subs = await repository.getSubscribers(faculty.id);
@@ -150,13 +154,82 @@ cron.schedule("0 */2 * * *", async () => {
 */
 cron.schedule("0 7 * * *", async () => {
   info(`Sheduler started at ${Date.now()}`);
+  for (const faculty of supportedFaculties) {
+    try {
+      const subs = await repository.getSubscribers(faculty.id);
+
+      for (const sub of subs) {
+        if (sub.subscribedToNotifications) {
+          const { messages } = await getPairsForTodayCommand(
+            sub,
+            sub.subscribedGroup ?? sub.subscribedLector,
+          );
+          for (const message of messages) {
+            if (sub.service === Services.TELEGRAM) {
+              await TelegramMessageSender.sendMessage({
+                target: sub.chatId,
+                message:
+                  `Пары для ${
+                    sub.subscribedGroup ?? sub.subscribedLector
+                  } на сегодня:\r\n` + message,
+              });
+            } else {
+              await vk.sendMessage({
+                target: sub.chatId,
+                message:
+                  `Пары для ${
+                    sub.subscribedGroup ?? sub.subscribedLector
+                  } на сегодня:\r\n` + message,
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      error(e);
+    }
+  }
 });
 
 /*
   Send notification to subscribers at 7 pm every day.
 */
-cron.schedule("0 19 * * *", async () => {
+cron.schedule("28 20 * * *", async () => {
   info(`Sheduler started at ${Date.now()}`);
+  for (const faculty of supportedFaculties) {
+    try {
+      const subs = await repository.getSubscribers(faculty.id);
+      for (const sub of subs) {
+        if (sub.subscribedToNotifications) {
+          const { messages } = await getPairsForTomorrowCommand(
+            sub,
+            sub.subscribedGroup ?? sub.subscribedLector,
+          );
+          for (const message of messages) {
+            if (sub.service === Services.TELEGRAM) {
+              await TelegramMessageSender.sendMessage({
+                target: sub.chatId,
+                message:
+                  `Пары для ${
+                    sub.subscribedGroup ?? sub.subscribedLector
+                  } на завтра:\r\n` + message,
+              });
+            } else {
+              await vk.sendMessage({
+                target: sub.chatId,
+                message:
+                  `Пары для ${
+                    sub.subscribedGroup ?? sub.subscribedLector
+                  } на завтра:\r\n` + message,
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      error(e);
+    }
+  }
 });
 
 const start = async () => {
@@ -170,7 +243,7 @@ const start = async () => {
   await telegramService.init();
   await vk.init();
   // eslint-disable-next-line
-  await checkTableForChangesAndBroadcast();
+  //await checkTableForChangesAndBroadcast();
 };
 
 start().catch(console.error);

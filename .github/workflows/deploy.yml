@@ -21,6 +21,8 @@ jobs:
           password: ${{ secrets.ROOT_PASS }}
           port: ${{ secrets.PORT }}
           script: |
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASS }}
             cd ${{ secrets.WORK_DIR }}
             git checkout ${{ secrets.MAIN_BANCH }}
             git fetch

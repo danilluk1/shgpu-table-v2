@@ -1,7 +1,7 @@
 import { Composer } from "grammy";
 import { Context } from "../types";
 import { getPairsForWeekCommand } from "../../../commands/get-pairs-weekly";
-import { getPairsForDayCommand } from "../../../commands/get-pairs-today";
+import { getPairsForTodayCommand } from "../../../commands/get-pairs-today";
 import { getPairsForTomorrowCommand } from "../../../commands/get-pairs-tommorow";
 import { getPairsForNextWeekCommand } from "../../../commands/get-pairs-next-week";
 import { TelegramMessageSender } from "../message-sender";
@@ -53,7 +53,7 @@ findPairsComposer.hears(/Пары сегодня/i, async (ctx) => {
     return;
   }
 
-  const { messages } = await getPairsForDayCommand(ctx.session.sub);
+  const { messages } = await getPairsForTodayCommand(ctx.session.sub);
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,

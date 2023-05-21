@@ -11,6 +11,8 @@ RUN npm i -g pnpm && pnpm install
 COPY . /app
 RUN pnpm run build
 
+ENV TZ=Asia/Yekaterinburg
+
 COPY docker.sh /
 RUN chmod +x /docker.sh
 ENTRYPOINT ["/docker.sh"]

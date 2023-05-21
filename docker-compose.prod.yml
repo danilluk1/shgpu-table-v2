@@ -7,6 +7,8 @@ services:
       - shgpu-table
     env_file:
       - ./.env.docker
+    environment:
+      - TZ=Asia/Yekaterinburg
     depends_on:
       postgres:
         condition: service_started

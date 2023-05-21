@@ -7,6 +7,8 @@ services:
       - shgpu-table-dev
     env_file:
       - ./.env.docker
+    environment:
+      - TZ=Asia/Yekaterinburg
   postgres:
     container_name: postgres
     image: postgres:14.1-alpine

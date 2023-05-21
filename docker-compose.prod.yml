@@ -7,6 +7,9 @@ services:
       - shgpu-table
     env_file:
       - ./.env.docker
+    depends_on:
+      postgres:
+        condition: service_started
   postgres:
     container_name: postgres
     image: postgres:15.1-alpine

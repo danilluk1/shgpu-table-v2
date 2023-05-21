@@ -135,7 +135,6 @@ export class ItienParser extends BaseParser {
             };
             pair.groupName = groupName;
             try {
-              console.log(pair.name);
               await repository.addPair(pair);
             } catch (e) {
               throw new TableParsingError(
@@ -184,7 +183,6 @@ export class ItienParser extends BaseParser {
                 };
                 pair.groupName = groupName;
                 try {
-                  console.log(pair.name);
                   await repository.addPair(pair);
                 } catch (e) {
                   throw new TableParsingError(

@@ -57,7 +57,7 @@ class Repository {
   public async findPairs(
     filter: string,
     begin: Date,
-    end: Date
+    end: Date,
   ): Promise<Pair[]> {
     let pairs = [];
 
@@ -83,7 +83,7 @@ class Repository {
     const lector = await this.typeorm
       .getRepository(PairEntity)
       .query(
-        `SELECT regexp_like(name, '.*${name}\\s.*', 'i') AS matched, pairs.* FROM pairs LIMIT 1;`
+        `SELECT regexp_like(name, '.*${name}\\s.*', 'i') AS matched, pairs.* FROM pairs LIMIT 1;`,
       );
 
     return lector;
@@ -92,12 +92,12 @@ class Repository {
   public async getPairsByInstructor(
     instructor: string,
     begin: Date,
-    end: Date
+    end: Date,
   ): Promise<Pair[]> {
     const pairs = await this.typeorm
       .getRepository(PairEntity)
       .query(
-        `SELECT * FROM pairs WHERE regexp_like(name, '.*${instructor}\\s.*', 'i') AND date >= '${begin.toISOString()}' AND date <= '${end.toISOString()}' ORDER BY date ASC;`
+        `SELECT * FROM pairs WHERE regexp_like(name, '.*${instructor}\\s.*', 'i') AND date >= '${begin.toISOString()}' AND date <= '${end.toISOString()}' ORDER BY date ASC;`,
       );
     const dtoPairs: Pair[] = [];
     pairs.forEach((pair: any) => {
@@ -112,7 +112,7 @@ class Repository {
   public async getPairsByDays(
     groupName: string,
     offset: number,
-    count: number
+    count: number,
   ) {
     const currentDate = dayjs();
     const startDate = currentDate.add(offset);
@@ -159,7 +159,7 @@ class Repository {
   public async getPairsByDates(
     groupName: string,
     begin: Date,
-    end: Date
+    end: Date,
   ): Promise<Pair[]> {
     const pairs = await this.typeorm.getRepository(PairEntity).find({
       order: {
@@ -230,7 +230,7 @@ class Repository {
       .from(PairEntity)
       .where(
         "facultyId = :facultyId AND date >= :beginDate AND date <= :endDate",
-        { facultyId: faculty, beginDate, endDate }
+        { facultyId: faculty, beginDate, endDate },
       )
       .execute();
   }

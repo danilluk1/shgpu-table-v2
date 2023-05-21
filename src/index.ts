@@ -16,6 +16,7 @@ import { TableDownloadError } from "./parser/errors/table-download.error";
 import { AxiosError } from "axios";
 import { WrongTableNameError } from "./parser/errors/wrong-table-name.error";
 import { TableParsingError } from "./parser/errors/table-parsing.error";
+import { ru } from "date-fns/locale";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [

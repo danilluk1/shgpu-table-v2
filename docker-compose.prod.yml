@@ -6,7 +6,7 @@ services:
     networks:
       - shgpu-table
     env_file:
-      - ./env.docker
+      - ./.env.docker
   postgres:
     container_name: postgres
     image: postgres:15.1-alpine

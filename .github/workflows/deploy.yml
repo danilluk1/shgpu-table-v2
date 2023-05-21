@@ -21,17 +21,9 @@ jobs:
           password: ${{ secrets.ROOT_PASS }}
           port: ${{ secrets.PORT }}
           script: |
+            cd ${{ secrets.WORK_DIR }}
+            git checkout ${{ secrets.MAIN_BANCH }}
+            git fetch
+            git pull
             docker compose -f docker-compose.prod.yml up -d
             exit
-
-      - name: install ssh keys
-        run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-      - name: connect and pull
-        run: ssh -p 49193 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BANCH }} && git pull && exit"
-      - name: run project
-        run: ssh -p 49193 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose -f docker-compose.prod.yml up -d && exit"
-      - name: cleanup
-        run: rm -rf ~/.ssh

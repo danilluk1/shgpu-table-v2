@@ -10,6 +10,8 @@ services:
     depends_on:
       postgres:
         condition: service_started
+    volumes:
+      - storage:/storage
   postgres:
     container_name: postgres
     image: postgres:15.1-alpine
@@ -45,3 +47,4 @@ networks:
 
 volumes:
   postgres-data:
+  storage:

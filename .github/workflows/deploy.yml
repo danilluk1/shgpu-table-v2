@@ -13,6 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Deploying new version
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.ROOT_PASS }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker compose -f docker-compose.prod.yml up -d
+            exit
+
       - name: install ssh keys
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -21,6 +32,6 @@ jobs:
       - name: connect and pull
         run: ssh -p 49193 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BANCH }} && git pull && exit"
       - name: run project
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose -f docker-compose.prod.yml up -d && exit"
+        run: ssh -p 49193 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose -f docker-compose.prod.yml up -d && exit"
       - name: cleanup
         run: rm -rf ~/.ssh

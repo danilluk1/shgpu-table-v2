@@ -19,7 +19,7 @@ export const startVKCommand = () => {
 
   return {
     success: true,
-    message: `Добро пожаловать в неофициального бота расписания ШГПУ`,
+    message: `Добро пожаловать в неофициального бота расписания ШГПУ.`,
     kb: keyboard,
   };
 };

@@ -11,7 +11,7 @@ services:
     volumes:
       - .:/var/lib/postgresql/shgpu-table
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d shgpu-table"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shgpu_table"]
       interval: 1m30s
       timeout: 30s
       retries: 5

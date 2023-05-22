@@ -1,12 +1,13 @@
 import { BaseParser } from "../parser/base-parser";
 import { ItienParser } from "../parser/itien-parser";
+import { PsychoParser } from "../parser/psycho-parser";
 
 export const createParserByFaculty = (facultyId: number): BaseParser | null => {
   switch (facultyId) {
     // case 12:
     //   return new GymParser(path);
-    // case 8:
-    //   return new PsychoParser(path);
+    case 8:
+      return new PsychoParser();
     case 11:
       return new ItienParser();
     // case 3:

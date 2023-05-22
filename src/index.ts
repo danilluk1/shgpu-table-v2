@@ -18,6 +18,7 @@ import { WrongTableNameError } from "./parser/errors/wrong-table-name.error";
 import { TableParsingError } from "./parser/errors/table-parsing.error";
 import { getPairsForTomorrowCommand } from "./commands/get-pairs-tommorow";
 import { getPairsForTodayCommand } from "./commands/get-pairs-today";
+import { BaseParser } from "./parser/base-parser";
 
 export const supportedFaculties: { id: number; name: string; link: string }[] =
   [
@@ -26,15 +27,15 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
     //   name: "Гуманитарный институт",
     //   link: "https://shgpi.edu.ru/struktura-universiteta/f12/raspisanie/raspisanie-ochnogo-otdelenija/",
     // },
-    // {
-    //   id: 8,
-    //   name: "Институт психологии и педагогики",
-    //   link: "https://shgpi.edu.ru/struktura-universiteta/f08/raspisanie/raspisanie-ochnogo-otdelenie-fpo/",
-    // },
     {
       id: 11,
       name: "Институт информационных технологий,точных и естественных наук",
       link: "https://shgpi.edu.ru/struktura-universiteta/f11/raspisanie/raspisanie-uchebnykh-zanjatii-ochnaja-forma-obuchenija/",
+    },
+    {
+      id: 8,
+      name: "Институт психологии и педагогики",
+      link: "https://shgpi.edu.ru/struktura-universiteta/f08/raspisanie/raspisanie-ochnogo-otdelenie-fpo/",
     },
     // {
     //   id: 3,
@@ -49,13 +50,14 @@ export const supportedFaculties: { id: number; name: string; link: string }[] =
   ];
 
 const checkTableForChangesAndBroadcast = async () => {
+  let parser: BaseParser;
   try {
     for (const faculty of supportedFaculties) {
       info(`Начинаю парсить данные для ${faculty.name}`);
       const page: string = await downloadPage(faculty.link);
       const links: string[] = getTopTablesLinks(page, 3);
       for (const link of links) {
-        const parser = createParserByFaculty(faculty.id);
+        parser = createParserByFaculty(faculty.id);
         let res = null;
         try {
           res = await parser.processTable(link);
@@ -81,8 +83,7 @@ const checkTableForChangesAndBroadcast = async () => {
           }
 
           if (message == "") {
-            info(`Закончил парсить данные для ${faculty.name}`);
-            return;
+            break;
           }
 
           try {
@@ -243,7 +244,7 @@ const start = async () => {
   await telegramService.init();
   await vk.init();
   // eslint-disable-next-line
-  //await checkTableForChangesAndBroadcast();
+  await checkTableForChangesAndBroadcast();
 };
 
 start().catch(console.error);

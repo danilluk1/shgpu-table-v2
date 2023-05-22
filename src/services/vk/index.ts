@@ -37,9 +37,7 @@ class VK extends ServiceInterface {
 
       this.bot.updates.on("message", async (ctx, next) => {
         if (!ctx.isUser) return;
-        if (ctx.text) chatIn(`VK [${ctx.peerId}]: ${ctx.text}`);
-
-        await this.ensureUser(ctx);
+        if (ctx.text) await this.ensureUser(ctx);
         await this.listener(ctx);
         next();
       });
@@ -82,6 +80,39 @@ class VK extends ServiceInterface {
       error(e);
     }
     return true;
+  }
+
+  @command(/^\/broadcast\s?(.*)$/im, {
+    description: "Отправить сообщение всем пользователям",
+  })
+  async broadcast(ctx: MessageContext) {
+    const adminsIds = process.env.VK_BOT_ADMINS.split(",");
+
+    if (!adminsIds.includes(ctx.peerId.toString())) {
+      await this.sendMessage({
+        target: ctx.peerId,
+        message: "Вы не можете использовать эту команду",
+      });
+      return;
+    }
+
+    const broadcastText = ctx.text.slice("/broadcast".length).trim();
+
+    if (!broadcastText) {
+      await this.sendMessage({
+        target: ctx.peerId,
+        message: "Неверное использование команды, необоходимо ввести текст",
+      });
+      return;
+    }
+
+    const subs = await repository.getServiceSubscribers(Services.VK);
+    for (const sub of subs) {
+      await this.sendMessage({
+        target: sub.chatId,
+        message: broadcastText,
+      });
+    }
   }
 
   @command(/^\/start$/i, { description: "Начать пользоваться ботом" })
@@ -208,6 +239,12 @@ class VK extends ServiceInterface {
     }
 
     const { messages } = await getPairsForWeekCommand(sub);
+    if (!messages.length) {
+      await ctx.send({
+        message: "Нет информации о парах на неделю",
+      });
+      return;
+    }
     for (const message of messages) {
       await ctx.send({
         message: message,

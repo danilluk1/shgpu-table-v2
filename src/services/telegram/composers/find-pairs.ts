@@ -21,6 +21,13 @@ findPairsComposer.hears(/Пары на неделю/i, async (ctx) => {
   }
 
   const { messages } = await getPairsForWeekCommand(ctx.session.sub);
+  if (!messages.length) {
+    await TelegramMessageSender.sendMessage({
+      target: ctx.chat.id,
+      message: "Нет информации о парах на неделю",
+    });
+    return;
+  }
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
@@ -33,6 +40,13 @@ findPairsComposer.hears(/Пары \S+ на неделю/i, async (ctx) => {
   const groupName = ctx.message.text.split(" ")[1];
 
   const { messages } = await getPairsForWeekCommand(ctx.session.sub, groupName);
+  if (!messages.length) {
+    await TelegramMessageSender.sendMessage({
+      target: ctx.chat.id,
+      message: "Нет информации о парах на неделю",
+    });
+    return;
+  }
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
@@ -54,6 +68,13 @@ findPairsComposer.hears(/Пары сегодня/i, async (ctx) => {
   }
 
   const { messages } = await getPairsForTodayCommand(ctx.session.sub);
+  if (!messages.length) {
+    await TelegramMessageSender.sendMessage({
+      target: ctx.chat.id,
+      message: "Нет информации о парах на сегодня",
+    });
+    return;
+  }
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
@@ -75,6 +96,13 @@ findPairsComposer.hears(/Пары на след неделю/i, async (ctx) => {
   }
 
   const { messages } = await getPairsForNextWeekCommand(ctx.session.sub);
+  if (!messages.length) {
+    await TelegramMessageSender.sendMessage({
+      target: ctx.chat.id,
+      message: "Нет информации о парах на следующую неделю",
+    });
+    return;
+  }
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,
@@ -96,6 +124,13 @@ findPairsComposer.hears(/Пары завтра/i, async (ctx) => {
   }
 
   const { messages } = await getPairsForTomorrowCommand(ctx.session.sub);
+  if (!messages.length) {
+    await TelegramMessageSender.sendMessage({
+      target: ctx.chat.id,
+      message: "Нет информации о парах на завтра",
+    });
+    return;
+  }
   for (const message of messages) {
     await TelegramMessageSender.sendMessage({
       target: ctx.chat.id,

@@ -36,6 +36,14 @@ class Repository {
     return subs;
   }
 
+  public async getServiceSubscribers(service: Services): Promise<Subscriber[]> {
+    const subs = await this.typeorm.getRepository(Subscriber).findBy({
+      service: service,
+    });
+
+    return subs;
+  }
+
   public async getVkSubscriber(chatId: string): Promise<Subscriber> {
     const sub = await this.typeorm.getRepository(Subscriber).findOneBy({
       chatId: chatId,
